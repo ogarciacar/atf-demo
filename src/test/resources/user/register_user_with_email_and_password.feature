@@ -6,7 +6,13 @@ Feature: Register user with email and password
     When the user tries to register into the system
     Then the user gets an error 400 and the message "Missing password"
 
-  Scenario: Successful registration
-    Given the user types email "rachel.howell@reqres.in" and password "secret"
+  Scenario Outline: Successful registration
+    Given the user types email "<email>" and password "<password>"
     When the user tries to register into the system
     Then the user gets a successful registration along with a token
+
+    Examples:
+      | email | password |
+      | george.bluth@reqres.in | secret |
+      | janet.weaver@reqres.in | password |
+      | emma.wong@reqres.in | my_pass |
