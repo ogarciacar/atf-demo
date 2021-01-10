@@ -1,15 +1,23 @@
 package com.gig.atfdemo.car.adapters.bdd;
 
+import com.gig.atfdemo.car.application.port.in.RegisterUserUseCase;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static com.gig.atfdemo.car.application.port.in.RegisterUserUseCase.RegisterUserCommand;
 
 public class RegisterUserStepdefs {
 
+    @Autowired
+    private RegisterUserUseCase registerUserUseCase;
+
+    private RegisterUserCommand registerUserCommand;
+
     @Given("the user types only its email {string}")
     public void the_user_types_only_its_email(String string) {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        registerUserCommand = new RegisterUserCommand(string, null);
     }
 
     @Then("the user gets an error {int} and the message {string}")
@@ -20,8 +28,7 @@ public class RegisterUserStepdefs {
 
     @When("the user tries to register into the system")
     public void the_user_tries_to_register_into_the_system() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        registerUserUseCase.registerUser(registerUserCommand);
     }
 
     @Given("the user types email {string} and password {string}")
