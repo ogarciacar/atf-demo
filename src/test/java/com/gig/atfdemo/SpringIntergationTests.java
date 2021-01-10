@@ -7,9 +7,4 @@ import org.springframework.boot.test.context.SpringBootTest;
 @CucumberContextConfiguration
 @SpringBootTest
 class SpringIntergationTests {
-
-	@Test
-	void contextLoads() {
-	}
-
 }
