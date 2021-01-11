@@ -10,7 +10,9 @@ testing environment:
   ```bash
   $ java --version
   ```
-* Maven 3.6 or later (Optional. A maven wrapper has been distributed with the demo)
+* Maven 3.6 or later (Optional)
+  * A maven wrapper has been distributed with the demo.
+  * All tests can be run in a docker container.
   ```bash
   # using the wrapper command
   $ ./mvnw --version
@@ -60,6 +62,11 @@ and provisioned with test dependencies to support BDD and REST API testing.
 The ATF's dependencies are managed with Maven. They are declared in the `pom.xml` file.
 Dependencies are installed by executing in the project root directory:
 ```bash
+# using maven in a docker container
+$ docker run -it --rm -v "$PWD":/usr/src/mymaven \
+    -v "$HOME/.m2":/root/.m2 \
+    -w /usr/src/mymaven maven mvn dependency:resolve
+    
 # using the maven wrapper
 $ ./mvnw dependency:resolve
 
@@ -69,3 +76,41 @@ $ mvn dependency:resolve
 The key test-related dependencies are:
 * [Cucumber](https://cucumber.io/) for BDD testing enablement and Gherkin syntax support.
 * [REST Assured](https://rest-assured.io/) for testing REST APIs.
+* [Spring for Apache Kafka](https://spring.io/projects/spring-kafka) for Kafka interaction.
+
+### Test Context Setup
+
+In order to run test scenarios related to the stream processing, it will be required
+to recreate the following context:
+```bash
+# network for testing
+$ docker network create app-tier --driver bridge
+
+# zookeper server
+$ docker run -d --name zookeeper-server --network app-tier -e ALLOW_ANONYMOUS_LOGIN=yes -p 2181:2181 bitnami/zookeeper:latest
+
+# kafka server
+$ docker run -d --name kafka-server --network app-tier -e ALLOW_PLAINTEXT_LISTENER=yes -e KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-server:2181 -p 9092:9092 bitnami/kafka:latest
+
+# create the cars topic
+$ docker run -it --rm --network app-tier -e KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-server:2181 bitnami/kafka:latest kafka-topics.sh --bootstrap-server kafka-server:9092 --create --topic cars
+```
+
+### Executing the tests
+
+Execute the following command to run the tests:
+```bash
+# all tests
+$ docker run -it --rm --network app-tier -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven maven mvn clean test
+```
+
+### Stream Pipeline Monitor
+
+In order to watch in realtime all messages sent to Kafka execute this command:
+```bash
+# kafka topic watcher
+$ docker run -it --rm --network app-tier -e KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-server:2181 \
+    bitnami/kafka:latest kafka-console-consumer.sh  \
+    --bootstrap-server kafka-server:9092 \
+    --topic cars
+```
