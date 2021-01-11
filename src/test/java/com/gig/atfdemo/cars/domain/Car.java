@@ -1,9 +1,11 @@
 package com.gig.atfdemo.cars.domain;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.NoArgsConstructor;
 
-@Value
+@NoArgsConstructor
+@Data
 @EqualsAndHashCode(callSuper = false)
 public class Car {
     String brandName;

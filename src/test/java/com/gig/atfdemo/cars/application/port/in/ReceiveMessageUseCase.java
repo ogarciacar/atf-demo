@@ -4,6 +4,6 @@ import com.gig.atfdemo.cars.domain.Car;
 
 import java.util.List;
 
-public interface SendMessageUseCase {
-    List<Car> sendMessages(int amount);
+public interface ReceiveMessageUseCase {
+    List<Car> receiveMessages();
 }
