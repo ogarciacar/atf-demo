@@ -15,7 +15,7 @@ public class KafkaRecieverPort implements ReceiveMessagePort {
 
     private List<Car> cars = new ArrayList<>();
     private final CountDownLatch latch = new CountDownLatch(1);
-    private boolean reset;
+    private boolean reset = false;
 
     @KafkaListener(topics = "cars", groupId="cars-msg", containerFactory = "carKafkaListenerContainerFactory")
     public void consume(Car car) {
